@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>As Laras - Mood Sharing</title>
+  <title>Os 3 Mosqueteiros - Mood Sharing</title>
   <style>
     /* Reset de estilos padrões */
     * {
@@ -185,7 +185,7 @@
 </head>
 <body>
   <header>
-    As Laras
+    Os 3 Mosqueteiros
   </header>
 
   <!-- Formulário de Post -->
@@ -221,13 +221,15 @@
     import { getFirestore, collection, addDoc, getDocs, query, orderBy, serverTimestamp } from 'https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js';
 
     const firebaseConfig = {
-      apiKey: "AIzaSyBJxt5VE1ygu0KUbzupf1HKTOYmCFZWbfA",
-      authDomain: "achapada-6ecee.firebaseapp.com",
-      projectId: "achapada-6ecee",
-      storageBucket: "achapada-6ecee.appspot.com",
-      messagingSenderId: "278004408842",
-      appId: "1:278004408842:web:baaa29641af0a32a7ef5f3"
-    };
+  apiKey: "AIzaSyBmaIc7aA25g5WVP_DTGHOCEtnW1ZXuyNc",
+  authDomain: "aawards.firebaseapp.com",
+  databaseURL: "https://aawards-default-rtdb.firebaseio.com",
+  projectId: "aawards",
+  storageBucket: "aawards.firebasestorage.app",
+  messagingSenderId: "839334918366",
+  appId: "1:839334918366:web:81f2bbfc78fd85f046ea4f",
+  measurementId: "G-Z9YLSTGHST"
+};
 
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
