@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>As Laras - Mood Sharing</title>
+  <style>
+    /* Reset de estilos padrões */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    /* Estilo geral do body */
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #fafafa;
+      color: #333;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    /* Contêiner geral */
+    .container {
+      max-width: 1200px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    /* Cabeçalho */
+    header {
+      background-color: #0a74da;
+      color: white;
+      width: 100%;
+      padding: 20px 0;
+      text-align: center;
+      font-size: 2em;
+      font-weight: 700;
+    }
+
+    /* Formulário de Post */
+    .form-container {
+      background: #ffffff;
+      width: 100%;
+      max-width: 600px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      padding: 30px;
+      margin-top: 30px;
+    }
+
+    h2 {
+      color: #333;
+      margin-bottom: 15px;
+      font-size: 1.8em;
+      text-align: center;
+    }
+
+    input[type="text"], textarea {
+      width: 100%;
+      padding: 12px;
+      margin-bottom: 20px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      font-size: 1em;
+      background-color: #f9f9f9;
+    }
+
+    input[type="text"]:focus, textarea:focus {
+      border-color: #0a74da;
+      outline: none;
+    }
+
+    .mood-selection {
+      display: flex;
+      justify-content: space-around;
+      margin-bottom: 20px;
+    }
+
+    .mood-selection input[type="radio"] {
+      display: none;
+    }
+
+    .mood-selection label {
+      font-size: 2em;
+      cursor: pointer;
+      transition: transform 0.2s ease;
+    }
+
+    .mood-selection label:hover {
+      transform: scale(1.2);
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      background-color: #0a74da;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 1.2em;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    button:hover {
+      background-color: #005c99;
+    }
+
+    /* Contêiner dos posts com scroll */
+    .posts-container {
+      width: 100%;
+      max-width: 800px;
+      margin-top: 40px;
+      padding-right: 15px;
+      max-height: 70vh;
+      overflow-y: auto;
+      padding-bottom: 50px;
+    }
+
+    /* Estilo individual de cada post */
+    .post {
+      background: #ffffff;
+      border-radius: 12px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      margin-bottom: 20px;
+      padding: 20px;
+      transition: transform 0.3s ease;
+    }
+
+    .post:hover {
+      transform: translateY(-5px);
+    }
+
+    .post-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+
+    .username {
+      font-weight: bold;
+      font-size: 1.2em;
+      color: #333;
+    }
+
+    .mood-icon {
+      font-size: 1.5em;
+    }
+
+    /* Seção de comentários */
+    .comment-section {
+      margin-top: 15px;
+      display: none;
+      padding-top: 10px;
+      border-top: 1px solid #eee;
+    }
+
+    .comment-input {
+      width: calc(100% - 40px);
+      padding: 10px;
+      margin-bottom: 10px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      background-color: #f9f9f9;
+    }
+
+    .comment-input:focus {
+      border-color: #0a74da;
+    }
+
+    .comment-list {
+      margin-top: 10px;
+      font-size: 1.1em;
+      color: #555;
+    }
+
+  </style>
+</head>
+<body>
+  <header>
+    As Laras
+  </header>
+
+  <!-- Formulário de Post -->
+  <div class="form-container">
+    <h2>Share Your Mood</h2>
+    <form id="postForm">
+      <input type="text" id="username" placeholder="Enter your name" required>
+
+      <textarea id="content" rows="4" placeholder="What's on your mind?" required></textarea>
+
+      <div class="mood-selection">
+        <input type="radio" id="moodHappy" name="mood" value="happy" required>
+        <label for="moodHappy">😊</label>
+
+        <input type="radio" id="moodSad" name="mood" value="sad" required>
+        <label for="moodSad">😢</label>
+
+        <input type="radio" id="moodAngry" name="mood" value="angry" required>
+        <label for="moodAngry">😡</label>
+
+        <input type="radio" id="moodExcited" name="mood" value="excited" required>
+        <label for="moodExcited">🤩</label>
+      </div>
+
+      <button type="submit">Post</button>
+    </form>
+  </div>
+
+  <!-- Contêiner de Posts -->
+  <div class="posts-container" id="postsContainer"></div>
+  <script type="module">
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js';
+    import { getFirestore, collection, addDoc, getDocs, query, orderBy, serverTimestamp } from 'https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js';
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyBJxt5VE1ygu0KUbzupf1HKTOYmCFZWbfA",
+      authDomain: "achapada-6ecee.firebaseapp.com",
+      projectId: "achapada-6ecee",
+      storageBucket: "achapada-6ecee.appspot.com",
+      messagingSenderId: "278004408842",
+      appId: "1:278004408842:web:baaa29641af0a32a7ef5f3"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    const postForm = document.getElementById('postForm');
+    const postsContainer = document.getElementById('postsContainer');
+    const usernameInput = document.getElementById('username');
+
+    // Load saved username
+    const savedUsername = localStorage.getItem('username');
+    if (savedUsername) {
+      usernameInput.value = savedUsername;
+    }
+
+    // Handle post submission
+    postForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const username = usernameInput.value;
+      const content = document.getElementById('content').value;
+      const mood = document.querySelector('input[name="mood"]:checked').value;
+
+      // Save username to LocalStorage
+      localStorage.setItem('username', username);
+
+      const newPost = {
+        username,
+        content,
+        mood,
+        timestamp: serverTimestamp(),
+      };
+
+      try {
+        await addDoc(collection(db, 'posts'), newPost);
+        fetchPosts(); // Refresh posts
+        postForm.reset(); // Clear form
+        usernameInput.value = username; // Restore username
+      } catch (e) {
+        console.error('Error adding document: ', e);
+      }
+    });
+
+    // Fetch and display posts
+    async function fetchPosts() {
+      const postsQuery = query(collection(db, 'posts'), orderBy('timestamp', 'desc'));
+      const querySnapshot = await getDocs(postsQuery);
+      postsContainer.innerHTML = '';
+      querySnapshot.forEach((doc) => {
+        const post = doc.data();
+        const postElement = createPostElement(post);
+        postsContainer.appendChild(postElement);
+      });
+    }
+
+    // Create post element
+    function createPostElement(post) {
+      const postDiv = document.createElement('div');
+      postDiv.className = 'post';
+
+      const postHeader = document.createElement('div');
+      postHeader.className = 'post-header';
+
+      const usernameDiv = document.createElement('span');
+      usernameDiv.className = 'username';
+      usernameDiv.textContent = post.username;
+
+      const moodIcon = document.createElement('span');
+      moodIcon.className = 'mood-icon';
+      moodIcon.textContent = getMoodIcon(post.mood);
+
+      postHeader.appendChild(usernameDiv);
+      postHeader.appendChild(moodIcon);
+
+      const contentDiv = document.createElement('p');
+      contentDiv.textContent = post.content;
+
+      postDiv.appendChild(postHeader);
+      postDiv.appendChild(contentDiv);
+
+      const commentSection = document.createElement('div');
+      commentSection.className = 'comment-section';
+
+      const commentInput = document.createElement('input');
+      commentInput.className = 'comment-input';
+      commentInput.placeholder = 'Add a comment...';
+
+      commentSection.appendChild(commentInput);
+      postDiv.appendChild(commentSection);
+
+      return postDiv;
+    }
+
+    // Get mood icon
+    function getMoodIcon(mood) {
+      const moodIcons = {
+        happy: '😊',
+        sad: '😢',
+        angry: '😡',
+        excited: '🤩',
+      };
+      return moodIcons[mood] || '😊';
+    }
+
+    // Initial load of posts
+    fetchPosts();
+  </script>
+</body>
+</html>
