@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+  <title>App Viagem Madrid</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Segoe UI', Arial, sans-serif; background: #f5f5f5; color: #333; display: flex; flex-direction: column; min-height: 100vh; }
+    header { background: linear-gradient(135deg, #e53935, #c62828); color: #fff; padding: 1.5rem; text-align: center; position: sticky; top: 0; z-index: 20; }
+    header h1 { font-size: 1.75rem; margin-bottom: 0.25rem; }
+    header p { font-size: 1rem; }
+    nav.main-nav { position: fixed; bottom: 0; left: 0; right: 0; background: #e53935; display: flex; justify-content: space-around; padding: 0.5rem 0; z-index: 20; box-shadow: 0 -2px 4px rgba(0,0,0,0.2); }
+    nav.main-nav button { background: none; border: none; color: #fff; font-size: 1.2rem; flex: 1; padding: 0.5rem; cursor: pointer; }
+    nav.main-nav button.active, nav.main-nav button:hover { background: #b71c1c; }
+    main { flex: 1; overflow-y: auto; padding: 1rem; margin-bottom: 4rem; }
+    .section { display: none; animation: fadeIn 0.4s ease; }
+    .section.active { display: block; }
+    h2 { text-align: center; color: #c62828; margin-bottom: 1rem; }
+    .card { background: #fff; border-radius: 12px; padding: 1rem; margin-bottom: 1rem; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+    .grid { display: grid; gap: 1rem; }
+    .grid-2 { grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); }
+    .btn { display: inline-block; width: 100%; padding: 0.75rem; border-radius: 8px; background: #c62828; color: #fff; font-size: 1rem; margin-top: 0.5rem; text-align: center; border: none; text-decoration: none; }
+    .btn:hover { background: #b71c1c; cursor: pointer; }
+
+    .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); display: flex; align-items: center; justify-content: center; visibility: hidden; opacity: 0; transition: opacity 0.3s; z-index: 30; }
+    .modal.active { visibility: visible; opacity: 1; }
+    .modal-content { background: #fff; padding: 1rem; border-radius: 12px; max-width: 90%; max-height: 90%; overflow: hidden; }
+    .close-btn { background: #c62828; color: #fff; border: none; padding: 0.5rem 1rem; border-radius: 4px; margin-top: 0.5rem; cursor: pointer; }
+
+    #carouselContainer {
+      display: flex;
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      gap: 1rem;
+      padding-bottom: 1rem;
+      margin-bottom: 1rem;
+    }
+    #carouselContainer > div {
+      flex: 0 0 100%;
+      scroll-snap-align: start;
+    }
+    #carouselContainer::-webkit-scrollbar {
+      display: none;
+    }
+    #carouselContainer {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>🗺️ Vamos a <strong>Madrid</strong></h1>
+    <p>Vamos Viajar 2025</p>
+  </header>
+
+  <main>
+    <section id="dashboard" class="section active">
+      <h2>Dashboard</h2>
+      <div class="card grid grid-2">
+        <div><p>📅 Hoje: <span id="dateMadrid">--/--/----</span></p></div>
+        <div><p>🌡️ Clima: <span id="weather">--</span></p></div>
+      </div>
+      <button class="btn" onclick="goHotel()">Voltar para o Hotel</button>
+    </section>
+
+    <section id="bilhetes" class="section">
+      <h2>Minhas Reservas</h2>
+      <div class="grid grid-2" id="ticketContainer"></div>
+    </section>
+  </main>
+
+  <nav class="main-nav">
+    <button onclick="showSection('dashboard')" class="active">🏠</button>
+    <button onclick="showSection('bilhetes')">🎟️</button>
+  </nav>
+
+  <div id="ticketModal" class="modal">
+    <div class="modal-content">
+      <h3 id="modalTitle"></h3>
+      <div id="carouselContainer"></div>
+      <a id="fullLink" href="#" target="_blank" class="btn">Ver Completo</a>
+      <button class="close-btn" onclick="closeModal()">Fechar</button>
+    </div>
+  </div>
+
+  <script>
+    function showSection(id) {
+      document.querySelectorAll('main .section').forEach(s => s.classList.remove('active'));
+      document.getElementById(id).classList.add('active');
+      document.querySelectorAll('nav.main-nav button').forEach(b => b.classList.remove('active'));
+      document.querySelector(`nav.main-nav button[onclick*="${id}"]`).classList.add('active');
+    }
+
+    function goHotel() {
+      const url = `https://www.google.com/maps/search/?api=1&query=Travelodge+Madrid+Metropolitano`;
+      window.open(url, '_blank');
+    }
+
+    function updateDate() {
+      const options = { timeZone: 'Europe/Madrid', day: '2-digit', month: '2-digit', year: 'numeric' };
+      const dt = new Date();
+      document.getElementById('dateMadrid').textContent = new Intl.DateTimeFormat('pt-PT', options).format(dt);
+    }
+    updateDate();
+
+    fetch('https://api.open-meteo.com/v1/forecast?latitude=40.4168&longitude=-3.7038&current_weather=true')
+      .then(r => r.json()).then(data => {
+        const w = data.current_weather;
+        document.getElementById('weather').textContent = `${w.temperature}°C`;
+      }).catch(() => document.getElementById('weather').textContent = 'N/A');
+
+    const tickets = [
+      {
+        title: 'Warner',
+        files: [
+          { preview: 'qr1.png', full: '1.pdf' },
+          { preview: 'qr2.png', full: '2.pdf' },
+          { preview: 'qr3.png', full: '3.pdf' },
+          { preview: 'qr4.png', full: '4.pdf' }
+        ]
+      },
+      {
+        title: 'Hotel',
+        files: [
+          { preview: 'qr.png', full: 'reserva.pdf' }
+        ]
+      },
+      {
+        title: 'Carro',
+        files: [
+          { preview: 'qr.png', full: 'carro.pdf' }
+        ]
+      }
+    ];
+
+    const ticketCont = document.getElementById('ticketContainer');
+
+    tickets.forEach(t => {
+      const c = document.createElement('div');
+      c.className = 'card';
+      c.innerHTML = `
+        <h3>🎟️ ${t.title}</h3>
+        <p>${t.files.length} ficheiro(s)</p>
+        <button class="btn" onclick="openTicket('${t.title}')">Abrir</button>
+      `;
+      ticketCont.appendChild(c);
+    });
+
+    function openTicket(title) {
+      const ticket = tickets.find(t => t.title === title);
+      const container = document.getElementById('carouselContainer');
+      container.innerHTML = '';
+      document.getElementById('modalTitle').textContent = title;
+
+      ticket.files.forEach((file, i) => {
+        const previewPath = `bilhetes/${title}/${file.preview}`;
+        const fullPath = `bilhetes/${title}/${file.full}`;
+        const ext = file.preview.split('.').pop().toLowerCase();
+        const slide = document.createElement('div');
+        slide.dataset.full = fullPath;
+
+        if (['jpg', 'jpeg', 'png', 'gif', 'png'].includes(ext)) {
+          const img = document.createElement('img');
+          img.src = previewPath;
+          img.style.width = '100%';
+          img.style.borderRadius = '8px';
+          slide.appendChild(img);
+        } else {
+          slide.innerHTML = `<p>Preview não suportado. <a href="${fullPath}" target="_blank">Abrir completo</a>.</p>`;
+        }
+
+        const caption = document.createElement('p');
+        caption.textContent = `Ficheiro ${i + 1}`;
+        caption.style.marginTop = '0.5rem';
+        slide.appendChild(caption);
+
+        container.appendChild(slide);
+      });
+
+      updateFullLinkFromVisibleSlide();
+      document.getElementById('ticketModal').classList.add('active');
+    }
+
+    function closeModal() {
+      document.getElementById('ticketModal').classList.remove('active');
+    }
+
+    function updateFullLinkFromVisibleSlide() {
+      const container = document.getElementById('carouselContainer');
+      const slides = Array.from(container.children);
+      const containerLeft = container.scrollLeft;
+      let closestSlide = slides[0];
+      let minDiff = Infinity;
+
+      slides.forEach(slide => {
+        const diff = Math.abs(slide.offsetLeft - containerLeft);
+        if (diff < minDiff) {
+          minDiff = diff;
+          closestSlide = slide;
+        }
+      });
+
+      const currentFull = closestSlide.dataset.full;
+      document.getElementById('fullLink').href = currentFull;
+    }
+
+    document.getElementById('carouselContainer').addEventListener('scroll', () => {
+      clearTimeout(window._scrollTimer);
+      window._scrollTimer = setTimeout(updateFullLinkFromVisibleSlide, 100);
+    });
+  </script>
+</body>
+</html>
