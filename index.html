@@ -1,337 +1,280 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Os 3 Mosqueteiros - Mood Sharing</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover">
+  <title>App Viagem Madrid</title>
   <style>
-    /* Reset de estilos padrões */
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
-    /* Estilo geral do body */
-    body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: #fafafa;
-      color: #333;
-      margin: 0;
-      padding: 0;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
-
-    /* Contêiner geral */
-    .container {
-      max-width: 1200px;
-      width: 100%;
-      margin: 0 auto;
-      padding: 20px;
-    }
-
-    /* Cabeçalho */
-    header {
-      background-color: #0a74da;
-      color: white;
-      width: 100%;
-      padding: 20px 0;
-      text-align: center;
-      font-size: 2em;
-      font-weight: 700;
-    }
-
-    /* Formulário de Post */
-    .form-container {
-      background: #ffffff;
-      width: 100%;
-      max-width: 600px;
-      border-radius: 12px;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-      padding: 30px;
-      margin-top: 30px;
-    }
-
-    h2 {
-      color: #333;
-      margin-bottom: 15px;
-      font-size: 1.8em;
-      text-align: center;
-    }
-
-    input[type="text"], textarea {
-      width: 100%;
-      padding: 12px;
-      margin-bottom: 20px;
-      border: 1px solid #ccc;
-      border-radius: 8px;
-      font-size: 1em;
-      background-color: #f9f9f9;
-    }
-
-    input[type="text"]:focus, textarea:focus {
-      border-color: #0a74da;
-      outline: none;
-    }
-
-    .mood-selection {
-      display: flex;
-      justify-content: space-around;
-      margin-bottom: 20px;
-    }
-
-    .mood-selection input[type="radio"] {
-      display: none;
-    }
-
-    .mood-selection label {
-      font-size: 2em;
-      cursor: pointer;
-      transition: transform 0.2s ease;
-    }
-
-    .mood-selection label:hover {
-      transform: scale(1.2);
-    }
-
-    button {
-      width: 100%;
-      padding: 12px;
-      background-color: #0a74da;
-      color: white;
-      border: none;
-      border-radius: 8px;
-      font-size: 1.2em;
-      cursor: pointer;
-      transition: background-color 0.3s ease;
-    }
-
-    button:hover {
-      background-color: #005c99;
-    }
-
-    /* Contêiner dos posts com scroll */
-    .posts-container {
-      width: 100%;
-      max-width: 800px;
-      margin-top: 40px;
-      padding-right: 15px;
-      max-height: 70vh;
-      overflow-y: auto;
-      padding-bottom: 50px;
-    }
-
-    /* Estilo individual de cada post */
-    .post {
-      background: #ffffff;
-      border-radius: 12px;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-      margin-bottom: 20px;
-      padding: 20px;
-      transition: transform 0.3s ease;
-    }
-
-    .post:hover {
-      transform: translateY(-5px);
-    }
-
-    .post-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 10px;
-    }
-
-    .username {
-      font-weight: bold;
-      font-size: 1.2em;
-      color: #333;
-    }
-
-    .mood-icon {
-      font-size: 1.5em;
-    }
-
-    /* Seção de comentários */
-    .comment-section {
-      margin-top: 15px;
-      display: none;
-      padding-top: 10px;
-      border-top: 1px solid #eee;
-    }
-
-    .comment-input {
-      width: calc(100% - 40px);
-      padding: 10px;
-      margin-bottom: 10px;
-      border-radius: 8px;
-      border: 1px solid #ccc;
-      background-color: #f9f9f9;
-    }
-
-    .comment-input:focus {
-      border-color: #0a74da;
-    }
-
-    .comment-list {
-      margin-top: 10px;
-      font-size: 1.1em;
-      color: #555;
-    }
-
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Segoe UI', Arial, sans-serif; background: #f5f5f5; color: #333; display: flex; flex-direction: column; min-height: 100vh; }
+    header { background: linear-gradient(135deg, #e53935, #c62828); color: #fff; padding: 1.5rem; text-align: center; position: sticky; top: 0; z-index: 20; }
+    header h1 { font-size: 1.75rem; margin-bottom: 0.25rem; }
+    header p { font-size: 1rem; }
+    nav.main-nav { position: fixed; bottom: 0; left: 0; right: 0; background: #e53935; display: flex; justify-content: space-around; padding: 0.5rem 0; z-index: 20; box-shadow: 0 -2px 4px rgba(0,0,0,0.2); }
+    nav.main-nav button { background: none; border: none; color: #fff; font-size: 1.2rem; flex: 1; padding: 0.5rem; cursor: pointer; }
+    nav.main-nav button.active, nav.main-nav button:hover { background: #b71c1c; }
+    main { flex: 1; overflow-y: auto; padding: 1rem; margin-bottom: 4rem; }
+    .section { display: none; animation: fadeIn 0.4s ease; }
+    .section.active { display: block; }
+    h2 { text-align: center; color: #c62828; margin-bottom: 1rem; }
+    .card { background: #fff; border-radius: 12px; padding: 1rem; margin-bottom: 1rem; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+    .grid { display: grid; gap: 1rem; }
+    .grid-2 { grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); }
+    .btn { display: inline-block; width: 100%; padding: 0.75rem; border-radius: 8px; background: #c62828; color: #fff; font-size: 1rem; margin-top: 0.5rem; text-align: center; border: none; text-decoration: none; }
+    .btn:hover { background: #b71c1c; cursor: pointer; }
+    select { width: 100%; padding: 0.75rem; border: 1px solid #ccc; border-radius: 8px; font-size: 1rem; margin-bottom: 1rem; }
+    table { width: 100%; border-collapse: collapse; margin-top: 0.5rem; }
+    th, td { padding: 0.75rem; border: 1px solid #ddd; font-size: 0.9rem; text-align: left; }
+    th { background: #f0f0f0; }
+    .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); display: flex; align-items: center; justify-content: center; visibility: hidden; opacity: 0; transition: opacity 0.3s; z-index: 30;}
+    .modal.active { visibility: visible; opacity: 1; }
+    .modal-content { background: #fff; padding: 1rem; border-radius: 12px; max-width: 90%; max-height: 90%; overflow: auto; }
+    .modal-content img, .modal-content iframe { width: 100%; height: auto; border-radius: 8px; }
+    .close-btn { background: #c62828; color: #fff; border: none; padding: 0.5rem 1rem; border-radius: 4px; margin-top: 0.5rem; cursor: pointer; }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
   </style>
 </head>
 <body>
+  <header>
+    <h1>🗺️ Vamos a <strong>Madrid</strong></h1>
+    <p>Vamos Viajar 2025</p>
+  </header>
 
-
-  <!-- Formulário de Post -->
-  <div class="form-container">
-    <h2>Share Your Mood</h2>
-    <form id="postForm">
-      <input type="text" id="username" placeholder="Enter your name" required>
-
-      <textarea id="content" rows="4" placeholder="What's on your mind?" required></textarea>
-
-      <div class="mood-selection">
-        <input type="radio" id="moodHappy" name="mood" value="happy" required>
-        <label for="moodHappy">😊</label>
-
-        <input type="radio" id="moodSad" name="mood" value="sad" required>
-        <label for="moodSad">😢</label>
-
-        <input type="radio" id="moodAngry" name="mood" value="angry" required>
-        <label for="moodAngry">😡</label>
-
-        <input type="radio" id="moodExcited" name="mood" value="excited" required>
-        <label for="moodExcited">🤩</label>
+  <main>
+    <section id="dashboard" class="section active">
+      <h2>Dashboard</h2>
+      <div class="card grid grid-2">
+        <div>
+          <p>📅 Hoje: <span id="dateMadrid">--/--/----</span></p>
+          <p>🕒 Hora: <span id="timeMadrid">--:--:--</span></p>
+        </div>
+        <div>
+          <p>🌡️ Clima: <span id="weather">--</span></p>
+          <p>⏳ Até Partida: <span id="countdown">--</span></p>
+        </div>
       </div>
+      <div class="card">
+        <h3>Agenda de Hoje</h3>
+        <div style="max-height:200px;overflow-y:auto;">
+          <table>
+            <thead><tr><th>Hora</th><th>Atividade</th></tr></thead>
+            <tbody id="todayTable">
+                <tr><td colspan="2">A carregar agenda...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <button class="btn" onclick="goHotel()">Voltar para o Hotel</button>
+    </section>
 
-      <button type="submit">Post</button>
-    </form>
+    <section id="itinerario" class="section">
+      <h2>Itinerário</h2>
+      <div class="card">
+        <select id="diaSelect">
+          <option value="quinta">Quinta</option>
+          <option value="sexta">Sexta</option>
+          <option value="sábado">Sábado</option>
+          <option value="domingo">Domingo</option>
+        </select>
+        <div id="diaConteudo"></div>
+      </div>
+    </section>
+
+    <section id="bilhetes" class="section">
+      <h2>Minhas Reservas</h2>
+      <div class="grid grid-2" id="ticketContainer"></div>
+    </section>
+
+    <section id="shortcuts" class="section">
+      <h2>Shortcuts</h2>
+      <div class="grid grid-2">
+        <button class="btn" onclick="openMaps('Puerta del Sol')">🌞 Sol</button>
+        <button class="btn" onclick="openMaps('Museo del Prado')">🎨 Prado</button>
+        <button class="btn" onclick="openMaps('Parque Retiro')">🌳 Retiro</button>
+        <button class="btn" onclick="openMaps('Travelodge Madrid Metropolitano')">🏨 Hotel</button>
+      </div>
+    </section>
+  </main>
+
+  <nav class="main-nav">
+    <button onclick="showSection('dashboard')" class="active">🏠</button>
+    <button onclick="showSection('itinerario')">🗓️</button>
+    <button onclick="showSection('bilhetes')">🎟️</button>
+    <button onclick="showSection('shortcuts')">📍</button>
+  </nav>
+
+  <div id="ticketModal" class="modal">
+    <div class="modal-content">
+      <h3 id="modalTitle"></h3>
+      <div id="modalBody"></div>
+      <a id="fullLink" href="#" target="_blank" class="btn">Ver Completo</a>
+      <button class="close-btn" onclick="closeModal()">Fechar</button>
+    </div>
   </div>
 
-  <!-- Contêiner de Posts -->
-  <div class="posts-container" id="postsContainer"></div>
-  <script type="module">
-    import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js';
-    import { getFirestore, collection, addDoc, getDocs, query, orderBy, serverTimestamp } from 'https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js';
-
-    const firebaseConfig = {
-  apiKey: "AIzaSyBmaIc7aA25g5WVP_DTGHOCEtnW1ZXuyNc",
-  authDomain: "aawards.firebaseapp.com",
-  databaseURL: "https://aawards-default-rtdb.firebaseio.com",
-  projectId: "aawards",
-  storageBucket: "aawards.firebasestorage.app",
-  messagingSenderId: "839334918366",
-  appId: "1:839334918366:web:81f2bbfc78fd85f046ea4f",
-  measurementId: "G-Z9YLSTGHST"
-};
-
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
-
-    const postForm = document.getElementById('postForm');
-    const postsContainer = document.getElementById('postsContainer');
-    const usernameInput = document.getElementById('username');
-
-    // Load saved username
-    const savedUsername = localStorage.getItem('username');
-    if (savedUsername) {
-      usernameInput.value = savedUsername;
+  <script>
+    // Navegação
+    function showSection(id) {
+      document.querySelectorAll('main .section').forEach(s => s.classList.remove('active'));
+      document.getElementById(id).classList.add('active');
+      document.querySelectorAll('nav.main-nav button').forEach(b => b.classList.remove('active'));
+      document.querySelector(`nav.main-nav button[onclick*="${id}"]`).classList.add('active');
+    }
+    // Ir para hotel
+    function goHotel() {
+      openMaps('Travelodge Madrid Metropolitano');
+    }
+    
+    // --- FIX 1: Abrir maps ---
+    // O URL estava incorreto e a sintaxe para inserir a variável também.
+    function openMaps(dest) {
+      const url = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(dest + ', Madrid')}`;
+      window.open(url, '_blank');
     }
 
-    // Handle post submission
-    postForm.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const username = usernameInput.value;
-      const content = document.getElementById('content').value;
-      const mood = document.querySelector('input[name="mood"]:checked').value;
+    // --- FIX 2: Data & Hora (Refatorado para robustez) ---
+    // Criamos um único objeto Date e depois formatamos para data e hora.
+    function updateDateTime() {
+      const options = { timeZone: 'Europe/Madrid' };
+      const dt = new Date();
+      document.getElementById('dateMadrid').textContent = dt.toLocaleDateString('pt-PT', options);
+      document.getElementById('timeMadrid').textContent = dt.toLocaleTimeString('pt-PT', options);
+    }
+    setInterval(updateDateTime, 1000);
+    updateDateTime();
 
-      // Save username to LocalStorage
-      localStorage.setItem('username', username);
-
-      const newPost = {
-        username,
-        content,
-        mood,
-        timestamp: serverTimestamp(),
-      };
-
-      try {
-        await addDoc(collection(db, 'posts'), newPost);
-        fetchPosts(); // Refresh posts
-        postForm.reset(); // Clear form
-        usernameInput.value = username; // Restore username
-      } catch (e) {
-        console.error('Error adding document: ', e);
+    // Countdown até partida (código original estava OK)
+    const depart = new Date('2025-08-07T06:00:00');
+    function updateCountdown() {
+      const diff = depart - new Date();
+      const el = document.getElementById('countdown');
+      if(diff <= 0) {
+        el.textContent = 'Boa viagem!';
+        return;
       }
+      const d = Math.floor(diff / 86400000);
+      const h = Math.floor((diff % 86400000) / 3600000);
+      const m = Math.floor((diff % 3600000) / 60000);
+      const s = Math.floor((diff % 60000) / 1000);
+      el.textContent = `${d}d ${h}h ${m}m ${s}s`;
+    }
+    setInterval(updateCountdown, 1000);
+    updateCountdown();
+
+    // Clima (código original estava OK)
+    fetch('https://api.open-meteo.com/v1/forecast?latitude=40.4168&longitude=-3.7038&current_weather=true')
+      .then(r => r.json()).then(data => {
+        const w = data.current_weather;
+        document.getElementById('weather').textContent = `${w.temperature}°C, Vento ${w.windspeed}km/h`;
+      }).catch(() => document.getElementById('weather').textContent = 'N/A');
+
+    // Itinerário e Agenda
+    const dias = {
+      quinta: [
+        {hora:'05:00', atividade:'Acordar'},
+        {hora:'09:00', atividade:'Mercado San Miguel'}
+      ],
+      sexta: [
+        {hora:'10:30', atividade:'Puerta del Sol'}
+      ],
+      // --- FIX 3: Corrigido 'sabado' para 'sábado' para corresponder ao nome do dia da semana ---
+      sábado: [
+        {hora:'10:00', atividade:'Museu Reina Sofia'}
+      ],
+      domingo:[
+        {hora:'11:00', atividade:'Brunch Malasaña'}
+      ]
+    };
+
+    const sel = document.getElementById('diaSelect'), cont = document.getElementById('diaConteudo');
+    
+    // Função auxiliar para criar links para locais específicos
+    function mapLink(act) {
+      const locaisComLink = ['Mercado San Miguel', 'Puerta del Sol', 'Museu Reina Sofia', 'Parque Retiro', 'Travelodge Madrid Metropolitano'];
+      if (locaisComLink.includes(act)) {
+        return `<a href="#" onclick="event.preventDefault(); openMaps('${act}')">${act}</a>`;
+      }
+      return act;
+    }
+
+    // Renderiza o itinerário para o dia selecionado
+    function renderItinerario(dia) {
+      let html = '<table><thead><tr><th>Hora</th><th>Atividade</th></tr></thead><tbody>';
+      if (dias[dia] && dias[dia].length > 0) {
+        dias[dia].forEach(item => {
+          html += `<tr><td>${item.hora}</td><td>${mapLink(item.atividade)}</td></tr>`;
+        });
+      } else {
+        html += '<tr><td colspan="2">Sem atividades planeadas.</td></tr>';
+      }
+      cont.innerHTML = html + '</tbody></table>';
+    }
+    sel.addEventListener('change', () => renderItinerario(sel.value));
+
+    // --- FIX 4: Função da agenda do dia (dashboard) corrigida ---
+    function summaryToday() {
+      // Usamos getDay() para obter o dia da semana como um número (0=Dom, 1=Seg, etc.)
+      const dayNames = ['domingo', 'segunda', 'terça', 'quarta', 'quinta', 'sexta', 'sábado'];
+      const today = new Date(new Date().toLocaleString('en-US', { timeZone: 'Europe/Madrid' }));
+      const day = dayNames[today.getDay()];
+      
+      const rows = dias[day] || [];
+      const tb = document.getElementById('todayTable');
+      
+      // Atualiza o <select> do itinerário para o dia de hoje
+      sel.value = day;
+      renderItinerario(day); // Renderiza o itinerário inicial
+      
+      if (rows.length > 0) {
+        tb.innerHTML = ''; // Limpa a tabela
+        // Usamos a função mapLink para criar links também na agenda do dia
+        rows.forEach(item => tb.innerHTML += `<tr><td>${item.hora}</td><td>${mapLink(item.atividade)}</td></tr>`);
+      } else {
+        tb.innerHTML = '<tr><td colspan="2">Sem atividades para hoje.</td></tr>';
+      }
+    }
+    summaryToday();
+
+    // Tickets (código original estava OK)
+    const tickets = [
+      {title:'Warner', info:'2 adultos, 1 infantil', date:'08/08/2025', url:'https://github.com/evinun/app-viagem-madrid/raw/main/bilhetes/warner.pdf'},
+      {title:'Sweet Space', info:'3 ingressos', date:'09/08/2025', url:'https://github.com/evinun/app-viagem-madrid/raw/main/bilhetes/sweet-space.jpeg'},
+      {title:'Hotel', info:'3 noites', date:'07/08/2025', url:'https://github.com/evinun/app-viagem-madrid/raw/main/bilhetes/hotel.pdf'},
+      {title:'Carro', info:'4 dias', date:'07/08/2025', url:'https://github.com/evinun/app-viagem-madrid/raw/main/bilhetes/carro.pdf'}
+    ];
+    const ticketCont = document.getElementById('ticketContainer');
+    tickets.forEach((t, i) => {
+      const c = document.createElement('div');
+      c.className = 'card';
+      c.innerHTML = `
+        <h3>🎟️ ${t.title}</h3>
+        <p>${t.info} • ${t.date}</p>
+        <button class="btn" onclick="openTicket(${i})">Abrir</button>
+      `;
+      ticketCont.appendChild(c);
     });
 
-    // Fetch and display posts
-    async function fetchPosts() {
-      const postsQuery = query(collection(db, 'posts'), orderBy('timestamp', 'desc'));
-      const querySnapshot = await getDocs(postsQuery);
-      postsContainer.innerHTML = '';
-      querySnapshot.forEach((doc) => {
-        const post = doc.data();
-        const postElement = createPostElement(post);
-        postsContainer.appendChild(postElement);
-      });
+    function openTicket(idx) {
+      const t = tickets[idx];
+      document.getElementById('modalTitle').textContent = t.title;
+      const body = document.getElementById('modalBody');
+      body.innerHTML = '';
+      if (t.url.match(/\.(jpg|jpeg|png|gif)$/i)) {
+        const img = document.createElement('img');
+        img.src = t.url;
+        body.appendChild(img);
+      } else {
+        const iframe = document.createElement('iframe');
+        iframe.src = t.url;
+        iframe.style.height = '60vh';
+        body.appendChild(iframe);
+      }
+      document.getElementById('fullLink').href = t.url;
+      document.getElementById('ticketModal').classList.add('active');
     }
-
-    // Create post element
-    function createPostElement(post) {
-      const postDiv = document.createElement('div');
-      postDiv.className = 'post';
-
-      const postHeader = document.createElement('div');
-      postHeader.className = 'post-header';
-
-      const usernameDiv = document.createElement('span');
-      usernameDiv.className = 'username';
-      usernameDiv.textContent = post.username;
-
-      const moodIcon = document.createElement('span');
-      moodIcon.className = 'mood-icon';
-      moodIcon.textContent = getMoodIcon(post.mood);
-
-      postHeader.appendChild(usernameDiv);
-      postHeader.appendChild(moodIcon);
-
-      const contentDiv = document.createElement('p');
-      contentDiv.textContent = post.content;
-
-      postDiv.appendChild(postHeader);
-      postDiv.appendChild(contentDiv);
-
-      const commentSection = document.createElement('div');
-      commentSection.className = 'comment-section';
-
-      const commentInput = document.createElement('input');
-      commentInput.className = 'comment-input';
-      commentInput.placeholder = 'Add a comment...';
-
-      commentSection.appendChild(commentInput);
-      postDiv.appendChild(commentSection);
-
-      return postDiv;
+    function closeModal() {
+      document.getElementById('ticketModal').classList.remove('active');
     }
-
-    // Get mood icon
-    function getMoodIcon(mood) {
-      const moodIcons = {
-        happy: '😊',
-        sad: '😢',
-        angry: '😡',
-        excited: '🤩',
-      };
-      return moodIcons[mood] || '😊';
-    }
-
-    // Initial load of posts
-    fetchPosts();
   </script>
 </body>
 </html>
